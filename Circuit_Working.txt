@@ -1,0 +1,111 @@
+QUIZ BUZZER SYSTEM — TECHNICAL WORKING
+
+1. CD4013BD — D FLIP-FLOP
+--------------------------
+
+The CD4013BD contains D-type flip-flops that act as the memory of the
+circuit.
+
+When a valid player's button press triggers the flip-flop, its Q output
+becomes HIGH and stays HIGH even after the button is released.
+
+This allows the circuit to remember which player was registered first.
+
+Q = 0  → Player not registered
+Q = 1  → Player registered
+
+
+2. SN74HC08N — AND GATES
+-------------------------
+
+The SN74HC08N contains four 2-input AND gates.
+
+An AND gate outputs HIGH only when both inputs are HIGH.
+
+The AND gates combine the player's button signal with the control/lockout
+signals from the flip-flops.
+
+Conceptually:
+
+    Player Button AND System Available → Trigger
+
+Once a flip-flop has been set, its output changes the logic conditions,
+preventing later button presses from triggering another player.
+
+
+3. FIRST-PRESS LOCKING
+----------------------
+
+Example: Player 2 presses first.
+
+    Button 2 pressed
+          ↓
+    AND-gate logic
+          ↓
+    CD4013 flip-flop triggered
+          ↓
+    Q becomes HIGH
+          ↓
+    Player 2 is stored as the winner
+          ↓
+    Logic blocks later inputs
+
+Even after Player 2 releases the button, Q remains HIGH until reset.
+
+
+4. RESET
+--------
+
+The reset button clears the stored state of the CD4013 flip-flops.
+
+Before reset:
+
+    Q = 1 → Winner stored
+
+After reset:
+
+    Q = 0 → System ready for another round
+
+
+5. LED + BUZZER
+---------------
+
+The corresponding LED provides visual indication of the registered player.
+
+The 220Ω resistors limit current through the LEDs.
+
+The buzzer provides audible feedback when a valid player is registered.
+
+
+6. BASIC SIGNAL FLOW
+--------------------
+
+Button
+  ↓
+SN74HC08N AND-gate logic
+  ↓
+CD4013BD flip-flop
+  ↓
+Winner state stored
+  ↓
+LED + buzzer
+  ↓
+Stored state feeds back into logic
+  ↓
+Later buttons blocked
+
+
+7. WHY BOTH ICs ARE NEEDED
+--------------------------
+
+SN74HC08N = performs the logic/conditions.
+
+CD4013BD = remembers the result.
+
+In simple terms:
+
+    74HC08 → "Is this button allowed to trigger?"
+    4013   → "Remember who triggered first."
+
+No microcontroller or software is required for the first-press locking
+logic.
